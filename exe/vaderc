@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+
+require 'vaderc'
+puts "Hello from Vaderc!"
