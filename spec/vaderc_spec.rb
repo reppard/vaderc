@@ -5,7 +5,20 @@ describe Vaderc do
     expect(Vaderc::VERSION).not_to be nil
   end
 
-  it 'does something useful' do
-    expect(false).to eq(true)
+  describe 'Vaderc.run' do
+    let(:options) {{
+      an_option:      'a value',
+      another_option: 'a value'
+    }}
+
+    it "takes an options hash" do
+      expect(Vaderc).to receive(:run).with(options)
+      Vaderc.run(options)
+    end
+
+    it "creates a new configuration with options" do
+      expect(Vaderc::Configuration).to receive(:new).with(options)
+      Vaderc.run(options)
+    end
   end
 end

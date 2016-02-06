@@ -1,5 +1,10 @@
 require "vaderc/version"
+require "vaderc/configuration"
 
 module Vaderc
-  # Your code goes here...
+  class << self
+    def run opts = {}
+      @config ||= Vaderc::Configuration.new( opts )
+    end
+  end
 end
