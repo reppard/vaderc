@@ -7,8 +7,8 @@ describe Vaderc do
 
   describe 'Vaderc.run' do
     let(:options) {{
-      an_option:      'a value',
-      another_option: 'a value'
+      server: 'localhost',
+      port:   '6667'
     }}
 
     it "takes an options hash" do
