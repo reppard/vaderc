@@ -31,8 +31,12 @@ describe Vaderc::SocketWrapper do
 
   describe "#connect" do
     let(:socket_wrapper) { Vaderc::SocketWrapper.new('localhost') }
+    let(:fake_socket){ Class.new }
 
     it 'should set connected to true' do
+      stub_const("TCPSocket", fake_socket)
+      expect(fake_socket).to receive(:new).with('localhost', 6667)
+
       socket_wrapper.connect
       expect(socket_wrapper.connected?).to be true
     end
