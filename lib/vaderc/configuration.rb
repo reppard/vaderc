@@ -26,7 +26,7 @@ module Vaderc
       {
         port:     ENV['VADERC_PORT']     ||'6667',
         mode:     ENV['VADERC_MODE']     || '8',
-        server:   ENV['VADERC_SERVER']   ||'irc.freenode.net',
+        server:   ENV['VADERC_SERVER']   || 'localhost',
         nickname: ENV['VADERC_NICKNAME'] || "vaderc#{Time.now.to_i}",
         realname: ENV['VADERC_REALNAME'] || "Vaderc User"
       }
