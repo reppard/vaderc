@@ -1,5 +1,6 @@
 require "vaderc/version"
 require "vaderc/configuration"
+require "vaderc/socket_wrapper"
 
 module Vaderc
   class << self
