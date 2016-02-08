@@ -2,9 +2,9 @@ require 'spec_helper'
 
 describe Vaderc::Configuration do
   context "#initialize" do
-    let(:configuration) { Vaderc::Configuration.new }
-
     describe "attributes" do
+      let(:configuration) { Vaderc::Configuration.new }
+
       it "has a default port" do
         expect(configuration.port).to eq('6667')
       end
@@ -42,11 +42,12 @@ describe Vaderc::Configuration do
       end
 
       it "can override defaults with env vars" do
-        allow(ENV).to receive(:[]).with('VADERC_PORT').and_return    ('1138')
-        allow(ENV).to receive(:[]).with('VADERC_MODE').and_return    ('1999')
-        allow(ENV).to receive(:[]).with('VADERC_SERVER').and_return  ('localhost')
-        allow(ENV).to receive(:[]).with('VADERC_NICKNAME').and_return('tommy')
-        allow(ENV).to receive(:[]).with('VADERC_REALNAME').and_return('tommy cool')
+        stub_const('ENV',{
+          'VADERC_PORT'     => '1138',
+          'VADERC_MODE'     => '1999',
+          'VADERC_SERVER'   => 'localhost',
+          'VADERC_NICKNAME' => 'tommy',
+          'VADERC_REALNAME' => 'tommy cool'})
 
         expect(configuration.port).to     eq('1138')
         expect(configuration.mode).to     eq('1999')
@@ -54,6 +55,84 @@ describe Vaderc::Configuration do
         expect(configuration.nickname).to eq('tommy')
         expect(configuration.realname).to eq('tommy cool')
       end
+    end
+
+    context "config_filename" do
+      let(:configuration) { Vaderc::Configuration.new }
+
+      it "has a default config_filename" do
+        stub_const('ENV', {'HOME' => '/home/user'})
+        expect(configuration.config_filename).to eq("/home/user/.vaderc/config.yml")
+      end
+
+      it "can specifiy config_filename" do
+        configuration = Vaderc::Configuration.new({config_filename: 'config.yml'})
+        expect(configuration.config_filename).to eq('config.yml')
+      end
+
+      describe "config_filename exists" do
+        it "uses file if config_filename exists" do
+          content = <<-"."
+            :server: localhost
+            :mode: 8
+            :port: 6668
+            :nickname: testUser
+            :realname: Real User
+          .
+
+          allow(File).to receive('exists?').with('config.yml'){ true }
+          allow(File).to receive('read').with('config.yml'){ content }
+          configuration = Vaderc::Configuration.new({config_filename: 'config.yml'})
+
+          expect(configuration.mode).to     eq(8)
+          expect(configuration.port).to     eq(6668)
+          expect(configuration.server).to   eq('localhost')
+          expect(configuration.nickname).to eq('testUser')
+          expect(configuration.realname).to eq('Real User')
+        end
+      end
+    end
+  end
+
+  describe "#load_local_config" do
+    let(:configuration){Vaderc::Configuration.new(
+      {config_filename: 'config.yml'}
+    )}
+
+    it "returns a hash" do
+      content = <<-"."
+        :server: localhost
+        :mode: 8
+        :port: 6668
+        :nickname: testUser
+        :realname: Real User
+      .
+
+      expected = {
+        server:  'localhost',
+        mode:     8,
+        port:     6668,
+        nickname: 'testUser',
+        realname: 'Real User'
+      }
+
+      allow(File).to receive('exists?').with('config.yml').and_return(true)
+      allow(File).to receive('read').with('config.yml').and_return(content)
+
+      hash = configuration.load_local_config('config.yml')
+      expect(hash).to eq(expected)
+    end
+
+    it "returns empty hash if config_file is invalid yaml" do
+      content = <<-"."
+        dumbdata
+      .
+
+      allow(File).to receive('exists?').with('config.yml').and_return(true)
+      allow(File).to receive('read').with('config.yml').and_return(content)
+
+      hash = configuration.load_local_config('config.yml')
+      expect(hash).to eq({})
     end
   end
 end

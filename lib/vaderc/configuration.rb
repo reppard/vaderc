@@ -1,3 +1,5 @@
+require 'yaml'
+
 module Vaderc
   class Configuration
 
@@ -7,14 +9,27 @@ module Vaderc
         :mode,
         :server,
         :nickname,
-        :realname
+        :realname,
+        :config_filename
       ]
     end
 
     attr_accessor(*keys)
 
     def initialize opts = {}
-      self.options = defaults.merge(opts)
+      @config_filename = opts.fetch(:config_filename, "#{ENV['HOME']}/.vaderc/config.yml")
+      local_opts       = load_local_config(@config_filename)
+      opts             = opts.merge(local_opts)
+      self.options     = defaults.merge(opts)
+    end
+
+    def load_local_config(filename)
+      if File.exists?(filename)
+        data = YAML::load(File.read(filename))
+        data.instance_of?(Hash) ? data : {}
+      else
+        {}
+      end
     end
 
     def options=(opts)
