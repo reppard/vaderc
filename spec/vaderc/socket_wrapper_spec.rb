@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Vaderc::SocketWrapper do
-  describe "::new" do
-    let(:socket_wrapper) { Vaderc::SocketWrapper.new('localhost')}
+  describe '::new' do
+    let(:socket_wrapper) { Vaderc::SocketWrapper.new('localhost') }
 
     it 'should return a Vaderc::SocketWrapper' do
       expect(socket_wrapper.class).to eq(Vaderc::SocketWrapper)
@@ -29,12 +29,12 @@ describe Vaderc::SocketWrapper do
     end
   end
 
-  describe "#connect" do
+  describe '#connect' do
     let(:socket_wrapper) { Vaderc::SocketWrapper.new('localhost') }
-    let(:fake_socket){ Class.new }
+    let(:fake_socket) { Class.new }
 
     it 'should set connected to true' do
-      stub_const("TCPSocket", fake_socket)
+      stub_const('TCPSocket', fake_socket)
       expect(fake_socket).to receive(:new).with('localhost', 6667)
 
       socket_wrapper.connect
@@ -48,12 +48,12 @@ describe Vaderc::SocketWrapper do
     end
   end
 
-  describe "#read" do
+  describe '#read' do
     let(:socket_wrapper) { Vaderc::SocketWrapper.new('localhost') }
 
     it 'should read from socket and chomp CRLF' do
       socket_wrapper.socket = StringIO.new("test string\r\n")
-      expect(socket_wrapper.read).to eq("test string")
+      expect(socket_wrapper.read).to eq('test string')
     end
   end
 end

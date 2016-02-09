@@ -1,20 +1,18 @@
 require 'socket'
 
 module Vaderc
+  # Vaderc::SocketWrapper
   class SocketWrapper
-
     attr_accessor :server, :port, :socket, :socket_class
+    attr_reader   :connected
+    alias :connected? connected
 
-    def initialize(server, port=6667, socket_class=TCPSocket)
+    def initialize(server, port = 6667, socket_class = TCPSocket)
       @server       = server
       @port         = port
       @connected    = false
       @socket       = nil
       @socket_class = socket_class
-    end
-
-    def connected?
-      @connected
     end
 
     def connect
