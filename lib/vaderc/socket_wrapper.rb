@@ -7,21 +7,33 @@ module Vaderc
     attr_reader   :connected
     alias :connected? connected
 
-    def initialize(server, port = 6667, socket_class = TCPSocket)
-      @server       = server
-      @port         = port
-      @connected    = false
-      @socket       = nil
-      @socket_class = socket_class
+    def initialize(args = {})
+      self.options = args
+    end
+
+    def options=(opts)
+      defaults.merge(opts).each { |k, v| instance_variable_set("@#{k}", v) }
     end
 
     def connect
-      @socket    = socket_class.new(@server, @port)
+      @socket    = socket_class.new(server, port)
       @connected = true
     end
 
     def read
-      @socket.readline.chomp("\r\n")
+      socket.readline.chomp("\r\n")
+    end
+
+    private
+
+    def defaults
+      {
+        server:       'localhost',
+        port:         6667,
+        socket_class: TCPSocket,
+        socket:       nil,
+        connected:    false
+      }
     end
   end
 end

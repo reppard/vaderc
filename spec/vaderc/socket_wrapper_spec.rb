@@ -1,14 +1,10 @@
 require 'spec_helper'
 
 describe Vaderc::SocketWrapper do
+  let(:socket_wrapper) { Vaderc::SocketWrapper.new }
   describe '::new' do
-    let(:socket_wrapper) { Vaderc::SocketWrapper.new('localhost') }
 
-    it 'should return a Vaderc::SocketWrapper' do
-      expect(socket_wrapper.class).to eq(Vaderc::SocketWrapper)
-    end
-
-    it 'has a server attribute' do
+    it 'has a default server attribute' do
       expect(socket_wrapper.server).to eq('localhost')
     end
 
@@ -30,7 +26,6 @@ describe Vaderc::SocketWrapper do
   end
 
   describe '#connect' do
-    let(:socket_wrapper) { Vaderc::SocketWrapper.new('localhost') }
     let(:fake_socket) { Class.new }
 
     it 'should set connected to true' do
@@ -49,7 +44,7 @@ describe Vaderc::SocketWrapper do
   end
 
   describe '#read' do
-    let(:socket_wrapper) { Vaderc::SocketWrapper.new('localhost') }
+    let(:socket_wrapper) { Vaderc::SocketWrapper.new }
 
     it 'should read from socket and chomp CRLF' do
       socket_wrapper.socket = StringIO.new("test string\r\n")
