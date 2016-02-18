@@ -3,7 +3,6 @@ require 'spec_helper'
 describe Vaderc::SocketWrapper do
   let(:socket_wrapper) { Vaderc::SocketWrapper.new }
   describe '::new' do
-
     it 'has a default server attribute' do
       expect(socket_wrapper.server).to eq('localhost')
     end
