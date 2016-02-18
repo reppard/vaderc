@@ -79,6 +79,7 @@ describe Vaderc::Configuration do
       describe 'config_filename exists' do
         before do
           allow(File).to receive('exist?').with('config.yml') { true }
+          allow(File).to receive('read').with('config.yml') { content }
         end
 
         let(:content) do
@@ -92,8 +93,6 @@ describe Vaderc::Configuration do
         end
 
         it 'uses file if config_filename exists' do
-          allow(File).to receive('read').with('config.yml') { content }
-
           expect(configuration.mode).to     eq(8)
           expect(configuration.port).to     eq(6668)
           expect(configuration.server).to   eq('localhost')
@@ -111,7 +110,6 @@ describe Vaderc::Configuration do
               realname: 'Real User'
             }
 
-            allow(File).to receive('read').with('config.yml') { content }
             hash = configuration.load_local_config('config.yml')
 
             expect(hash).to be_kind_of(Hash)
@@ -119,12 +117,8 @@ describe Vaderc::Configuration do
           end
 
           it 'returns empty hash if config_file is invalid yaml' do
-            bad_content = 'bad_content'
-
-            allow(File).to receive('read').with('config.yml') { bad_content }
-            hash = configuration.load_local_config('config.yml')
-
-            expect(hash).to eq({})
+            allow(File).to receive('read').with('config.yml') { 'bad_content' }
+            expect(configuration.load_local_config('config.yml')).to eq({})
           end
         end
       end
